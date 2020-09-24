@@ -27,24 +27,30 @@ Sub Main_Process()
         
         'define all the inputs
         PPR_extension = "PPR.csv"
+        'PPR_extension = "processPathReport-KRB1-Day*"
         PPR_input_file = Dir(folder_path & PPR_extension)
         
         PID_extension = "PID.csv"
+        'PID_extension = "dat*"
         PID_input_file = Dir(folder_path & PID_extension)
         
         LPIstow_extension = "LPIstow.csv"
+        'LPIstow_extension = "processInspector-BIN_USAGE-CONTAINER_TYPE"
         LPIstow_input_file = Dir(folder_path & LPIstow_extension)
 
         'MTpick_extension = "MTpick.csv"
         'MTpick_input_file = Dir(folder_path & MTpick_extension)
 
         FRR_extension = "FRR.csv"
+        'FRR_extension = "functionRollupReport-KRB1-Transf*"
         FRR_input_file = Dir(folder_path & FRR_extension)
 
         LPIpick_extension = "LPIpick.csv"
+        'LPIpick_extension = "processInspector-CONTAINER_TYPE-GL_CODE"
         LPIpick_input_file = Dir(folder_path & LPIpick_extension)
         
         UR_extension = "UR.csv"
+        'UR_extension = "unitsRollup-KRB1-ItemPicked*"
         UR_input_file = Dir(folder_path & UR_extension)
         
         'FRTOP_extension = "FRTOP.csv"
@@ -53,25 +59,25 @@ Sub Main_Process()
         
         'open workbook
         Set wbPPR = Workbooks.Open(Filename:=folder_path & PPR_input_file)
-        Set shtPPR = wbPPR.Sheets("PPR")
+        Set shtPPR = wbPPR.Sheets(1)
         
         Set wbPID = Workbooks.Open(Filename:=folder_path & PID_input_file)
-        Set shtPID = wbPID.Sheets("PID")
+        Set shtPID = wbPID.Sheets(1)
         
         Set wbLPIstow = Workbooks.Open(Filename:=folder_path & LPIstow_input_file)
-        Set shtLPIstow = wbLPIstow.Sheets("LPIstow")
+        Set shtLPIstow = wbLPIstow.Sheets(1)
 
         'Set wbMTpick = Workbooks.Open(Filename:=folder_path & MTpick_input_file)
         'Set shtMTpick = wbMTpick.Sheets("MTpick")
 
         Set wbFRR = Workbooks.Open(Filename:=folder_path & FRR_input_file)
-        Set shtFRR = wbFRR.Sheets("FRR")
+        Set shtFRR = wbFRR.Sheets(1)
 
         Set wbLPIpick = Workbooks.Open(Filename:=folder_path & LPIpick_input_file)
-        Set shtLPIpick = wbLPIpick.Sheets("LPIpick")
+        Set shtLPIpick = wbLPIpick.Sheets(1)
         
         Set wbUR = Workbooks.Open(Filename:=folder_path & UR_input_file)
-        Set shtUR = wbUR.Sheets("UR")
+        Set shtUR = wbUR.Sheets(1)
         
         'Set wbFRTOP = Workbooks.Open(Filename:=folder_path & FRTOP_input_file)
         'Set shtFRTOP = wbFRTOP.Sheets("FRTOP")
@@ -109,6 +115,7 @@ Sub Main_Process()
     
 Application.ScreenUpdating = True
 
+shtMaint.Activate
 End Sub
 
 Function do_something(ByRef sInput As String)
@@ -180,5 +187,7 @@ output_sheet.Cells(output_row, col).value = Round(Application.SumIfs(input_sheet
 Application.SumIfs(input_sheet.Columns(11), input_sheet.Columns(16), "Total", input_sheet.Columns(15), "Case"), 1)
 
 End Sub
+
+
 
 
