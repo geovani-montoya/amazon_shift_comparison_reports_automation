@@ -26,31 +26,31 @@ Sub Main_Process()
         folder_path = "C:\Users\geomonto\Desktop\Shift_Comparison_Reporting\" & data_path & "\"
         
         'define all the inputs
-        PPR_extension = "PPR.csv"
-        'PPR_extension = "processPathReport-KRB1-Day*"
+        'PPR_extension = "PPR.csv"
+        PPR_extension = "processPathReport-KRB1-Day*"
         PPR_input_file = Dir(folder_path & PPR_extension)
         
-        PID_extension = "PID.csv"
-        'PID_extension = "dat*"
+        'PID_extension = "PID.csv"
+        PID_extension = "dat*"
         PID_input_file = Dir(folder_path & PID_extension)
         
-        LPIstow_extension = "LPIstow.csv"
-        'LPIstow_extension = "processInspector-BIN_USAGE-CONTAINER_TYPE"
+        'LPIstow_extension = "LPIstow.csv"
+        LPIstow_extension = "processInspector-BIN_USAGE*"
         LPIstow_input_file = Dir(folder_path & LPIstow_extension)
 
         'MTpick_extension = "MTpick.csv"
         'MTpick_input_file = Dir(folder_path & MTpick_extension)
 
-        FRR_extension = "FRR.csv"
-        'FRR_extension = "functionRollupReport-KRB1-Transf*"
+        'FRR_extension = "FRR.csv"
+        FRR_extension = "functionRollupReport-KRB1-Transf*"
         FRR_input_file = Dir(folder_path & FRR_extension)
 
-        LPIpick_extension = "LPIpick.csv"
-        'LPIpick_extension = "processInspector-CONTAINER_TYPE-GL_CODE"
+        'LPIpick_extension = "LPIpick.csv"
+        LPIpick_extension = "processInspector-CONTAINER_TYPE*"
         LPIpick_input_file = Dir(folder_path & LPIpick_extension)
         
-        UR_extension = "UR.csv"
-        'UR_extension = "unitsRollup-KRB1-ItemPicked*"
+        'UR_extension = "UR.csv"
+        UR_extension = "unitsRollup-KRB1-ItemPicked*"
         UR_input_file = Dir(folder_path & UR_extension)
         
         'FRTOP_extension = "FRTOP.csv"
@@ -115,7 +115,6 @@ Sub Main_Process()
     
 Application.ScreenUpdating = True
 
-shtMaint.Activate
 End Sub
 
 Function do_something(ByRef sInput As String)
