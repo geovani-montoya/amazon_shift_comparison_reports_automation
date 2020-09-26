@@ -5,16 +5,38 @@ Sub Main_Process()
 
     Dim folder_path As String, file_extension As String, input_file As String
     Dim wbPPR As Workbook, wbPID As Workbook, wbLPIstow As Workbook, wbMTpick As Workbook
-    Dim wbFRR As Workbook, wbLPIpick As Workbook, wbUR As Workbook ', wbFRTOP As Workbook
+    Dim wbFRR As Workbook, wbLPIpick As Workbook, wbUR As Workbook
     Dim shtPPR As Worksheet, shtPID As Worksheet, shtLPIstow As Worksheet, shtMTpick As Worksheet
-    Dim shtFRR As Worksheet, shtLPIpick As Worksheet, shtUR As Worksheet ', shtFRTOP As Worksheet
-    Dim orow As Integer
+    Dim shtFRR As Worksheet, shtLPIpick As Worksheet, shtUR As Worksheet
+    Dim frontHalf_startRow As Integer
+    Dim backHalf_startRow As Integer
     Dim data_path As Variant
     Dim aStrings(1 To 7) As String
+    Dim myDate As Variant
     
-    orow = 20
+    frontHalf_startRow = 14
+    backHalf_startRow = 34
 
     Call InitializeVariables
+    
+    'pick the first date
+    myDate = InputBox("Give the date of first day (MM/DD/YYYY)")
+    
+    Range("A14").Select
+    Selection.NumberFormat = "m/d/yyyy"
+    Range("A14").Select
+    ActiveCell.FormulaR1C1 = myDate '"9/15/2020"
+    Range("A14").Select
+    Selection.AutoFill Destination:=Range("A14:A20"), Type:=xlFillDefault
+    
+    Range("A34").Select
+    Selection.NumberFormat = "m/d/yyyy"
+    Range("A34").Select
+    ActiveCell.FormulaR1C1 = myDate '"9/15/2020"
+    Range("A34").Select
+    Selection.AutoFill Destination:=Range("A34:A40"), Type:=xlFillDefault
+    Range("C2").Select
+
 
     aStrings(1) = "data1": aStrings(2) = "data2": aStrings(3) = "data3": _
     aStrings(4) = "data4": aStrings(5) = "data5": aStrings(6) = "data6": _
@@ -53,8 +75,6 @@ Sub Main_Process()
         UR_extension = "unitsRollup-KRB1-ItemPicked*"
         UR_input_file = Dir(folder_path & UR_extension)
         
-        'FRTOP_extension = "FRTOP.csv"
-        'FRTOP_input_file = Dir(folder_path & FRTOP_extension)
        
         
         'open workbook
@@ -78,28 +98,37 @@ Sub Main_Process()
         
         Set wbUR = Workbooks.Open(Filename:=folder_path & UR_input_file)
         Set shtUR = wbUR.Sheets(1)
-        
-        'Set wbFRTOP = Workbooks.Open(Filename:=folder_path & FRTOP_input_file)
-        'Set shtFRTOP = wbFRTOP.Sheets("FRTOP")
        
         
         
-        'Get data
-        Call PPR_transfer(shtPPR, shtMain, orow)
-        Call PID_transfer(shtPID, shtMain, orow)
-        Call LPI_transfer(shtLPIstow, shtMain, 9, orow)
-        'Call MTpick_transfer(shtMTpick, shtMain, orow)
-        Call LPI_transfer(shtLPIpick, shtMain, 16, orow)
-        Call IBCPLH(shtPPR, shtMain, orow)
-        Call FRR_transfer(shtFRR, shtMain, 13, orow)
-        Call OBCPLH(shtPPR, shtUR, shtMain, 12, orow)
-        Call pickRate(shtFRR, shtMain, 10, orow)
+        'Get data to fronHalf
+        Call PPR_transfer(shtPPR, shtMain, frontHalf_startRow)
+        Call PID_transfer(shtPID, shtMain, frontHalf_startRow)
+        Call LPI_transfer(shtLPIstow, shtMain, 9, frontHalf_startRow)
+        'Call MTpick_transfer(shtMTpick, shtMain, frontHalf_startRow)
+        Call LPI_transfer(shtLPIpick, shtMain, 16, frontHalf_startRow)
+        Call IBCPLH(shtPPR, shtMain, frontHalf_startRow)
+        Call FRR_transfer(shtFRR, shtMain, 13, frontHalf_startRow)
+        Call OBCPLH(shtPPR, shtUR, shtMain, 12, frontHalf_startRow)
+        Call pickRate(shtFRR, shtMain, 10, frontHalf_startRow)
         
+        'Get data to backHalf
         
+        Call PPR_transfer(shtPPR, shtMain, backHalf_startRow)
+        Call PID_transfer(shtPID, shtMain, backHalf_startRow)
+        Call LPI_transfer(shtLPIstow, shtMain, 9, backHalf_startRow)
+        'Call MTpick_transfer(shtMTpick, shtMain, fronHalf_startRow)
+        Call LPI_transfer(shtLPIpick, shtMain, 16, backHalf_startRow)
+        Call IBCPLH(shtPPR, shtMain, backHalf_startRow)
+        Call FRR_transfer(shtFRR, shtMain, 13, backHalf_startRow)
+        Call OBCPLH(shtPPR, shtUR, shtMain, 12, backHalf_startRow)
+        Call pickRate(shtFRR, shtMain, 10, backHalf_startRow)
         
         
         'add in 1 row increments
-        orow = orow + 1
+        frontHalf_startRow = frontHalf_startRow + 1
+        backHalf_startRow = backHalf_startRow + 1
+        
         
         wbPPR.Close
         wbPID.Close
@@ -108,7 +137,7 @@ Sub Main_Process()
         wbFRR.Close
         wbLPIpick.Close
         wbUR.Close
-        'wbFRTOP.Close
+        
         input_file = Dir
         
     Next data_path

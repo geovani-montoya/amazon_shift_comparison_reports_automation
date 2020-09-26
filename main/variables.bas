@@ -13,7 +13,7 @@ Public Sub InitializeVariables()
     'ActiveSheet.Name = myValue
     
     With wbMain
-        Set shtMain = .Sheets("demo")
+        Set shtMain = .Sheets("Report Generator")
         'Set shtMain = .Sheets(myValue)
     End With
    
