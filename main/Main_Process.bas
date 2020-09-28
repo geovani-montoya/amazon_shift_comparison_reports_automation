@@ -45,7 +45,7 @@ Sub Main_Process()
 
     For Each data_path In aStrings
         'IMPORTANT: Replace the "..." with below by the path to the data files
-        folder_path = "C:\Users\geomonto\Desktop\Shift_Comparison_Reporting\" & data_path & "\"
+        folder_path = "C:\Users*****************" & data_path & "\"     'Remember to add file location
         
         'define all the inputs
         'PPR_extension = "PPR.csv"
