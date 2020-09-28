@@ -9,7 +9,7 @@ Sub copy_report()
     newSheet_name = InputBox("Name the new worksheet (suggested to name by the first date on the week)")
 
     Sheets("Report Generator").Select
-    Sheets("Report Generator").Copy After:=Sheets(21)
+    Sheets("Report Generator").Copy After:=Sheets(Sheets.Count)
     Sheets("Report Generator (2)").Select
     
         
