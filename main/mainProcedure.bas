@@ -9,7 +9,7 @@ Sub mainProcedure()
     Dim building As String
 
     dtStartDate = Range("A14").value '#1/1/2018#
-    dtEndDate = dtStartDate + 6
+    dtEndDate = dtStartDate + 2
     
     building = Range("A6").value
     
@@ -68,9 +68,9 @@ Public Sub checkWorksheet(refIter As String, dtDate, building)
     Cells.Select
     Selection.ClearContents
     
-        With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
+    With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
         
-        .Name = "website" & startDay
+        .Name = "website" & startDay 'makes sure that it connects to different websites
         .FieldNames = True
         .RowNumbers = False
         .FillAdjacentFormulas = False
@@ -92,7 +92,6 @@ Public Sub checkWorksheet(refIter As String, dtDate, building)
         .Refresh BackgroundQuery:=True
     End With
     
-    'Application.Wait (Now + TimeValue("0:00:10"))
     
     Sheets(refIter).Select
 
