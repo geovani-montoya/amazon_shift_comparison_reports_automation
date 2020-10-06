@@ -3,6 +3,9 @@ Option Explicit
 
 Sub mainProcedure()
 
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = False
+
     Dim dtDate As Date, dtStartDate As Date, dtEndDate As Date
     Dim iter As Integer
     Dim stIter As String
@@ -18,7 +21,7 @@ Sub mainProcedure()
     For dtDate = dtStartDate To dtEndDate
         iter = iter + 1
         stIter = CStr(iter)
-        Call importPPR(stIter, dtDate, building)
+        Call import("ppr", stIter, dtDate, building)
 
         Application.Wait (Now + TimeValue("0:00:01"))
     'Debug.Print (dtDate)
@@ -26,11 +29,12 @@ Sub mainProcedure()
     Next dtDate
     
     'Call delayedSort
+    Application.ScreenUpdating = True
 
 End Sub
 
 
-Sub importPPR(refIter As String, dtDate, building)
+Sub import(dtBase As String, refIter As String, dtDate, building)
 '''' THIS SUB MAKES SURE THE RIGHT WORKSHEETS ARE PRESENT OR CREATES THEM'''
     Dim Flag
     Dim Count
@@ -38,7 +42,7 @@ Sub importPPR(refIter As String, dtDate, building)
     Dim wsName
 
     'name of worksheet iteration"
-    refIter = "ppr" + refIter
+    refIter = dtBase + refIter
     
     Flag = 0
     Count = ActiveWorkbook.Worksheets.Count
