@@ -1,221 +1,187 @@
-Attribute VB_Name = "main"
-Sub Main_Process()
-    Application.Calculation = xlCalculationAutomatic
-    Application.ScreenUpdating = False
+Attribute VB_Name = "mainProcedure"
+Option Explicit
 
-    Dim folder_path As String, file_extension As String, input_file As String
-    Dim wbPPR As Workbook, wbPID As Workbook, wbLPIstow As Workbook, wbMTpick As Workbook
-    Dim wbFRR As Workbook, wbLPIpick As Workbook, wbUR As Workbook
-    Dim shtPPR As Worksheet, shtPID As Worksheet, shtLPIstow As Worksheet, shtMTpick As Worksheet
-    Dim shtFRR As Worksheet, shtLPIpick As Worksheet, shtUR As Worksheet
-    Dim frontHalf_startRow As Integer
-    Dim backHalf_startRow As Integer
-    Dim data_path As Variant
-    Dim aStrings(1 To 7) As String
-    Dim myDate As Variant
+Sub mainProcedure()
+
+    Dim dtDate As Date, dtStartDate As Date, dtEndDate As Date
+    Dim iter As Integer
+    Dim stIter As String
+    Dim building As String
+
+    dtStartDate = Range("B2").value '#1/1/2018#
+    dtEndDate = dtStartDate + 6
     
-    frontHalf_startRow = 14
-    backHalf_startRow = 34
-
-    Call InitializeVariables
+    building = Range("B3").value
     
-    'pick the first date
-    myDate = InputBox("Give the date of first day (MM/DD/YYYY)")
+    iter = 0
+
+    For dtDate = dtStartDate To dtEndDate
+        iter = iter + 1
+        stIter = CStr(iter)
+        Call importPPR(stIter, dtDate, building)
+
+        Application.Wait (Now + TimeValue("0:00:01"))
+    'Debug.Print (dtDate)
+        
+    Next dtDate
     
-    Range("A14").Select
-    Selection.NumberFormat = "m/d/yyyy"
-    Range("A14").Select
-    ActiveCell.FormulaR1C1 = myDate '"9/15/2020"
-    Range("A14").Select
-    Selection.AutoFill Destination:=Range("A14:A20"), Type:=xlFillDefault
+    'Call delayedSort
+
+End Sub
+
+
+Sub importPPR(refIter As String, dtDate, building)
+'''' THIS SUB MAKES SURE THE RIGHT WORKSHEETS ARE PRESENT OR CREATES THEM'''
+    Dim Flag
+    Dim Count
+    Dim i
+    Dim wsName
+
+    'name of worksheet iteration"
+    refIter = "ppr" + refIter
     
-    Range("A34").Select
-    Selection.NumberFormat = "m/d/yyyy"
-    Range("A34").Select
-    ActiveCell.FormulaR1C1 = myDate '"9/15/2020"
-    Range("A34").Select
-    Selection.AutoFill Destination:=Range("A34:A40"), Type:=xlFillDefault
-    Range("C2").Select
-
-
-    aStrings(1) = "data1": aStrings(2) = "data2": aStrings(3) = "data3": _
-    aStrings(4) = "data4": aStrings(5) = "data5": aStrings(6) = "data6": _
-    aStrings(7) = "data7"
-
-
-    For Each data_path In aStrings
-        'IMPORTANT: Replace the "..." with below by the path to the data files
-        folder_path = "C:\Users*****************" & data_path & "\"     'Remember to add file location
-        
-        'define all the inputs
-        'PPR_extension = "PPR.csv"
-        PPR_extension = "processPathReport-KRB1-Day*"
-        PPR_input_file = Dir(folder_path & PPR_extension)
-        
-        'PID_extension = "PID.csv"
-        PID_extension = "dat*"
-        PID_input_file = Dir(folder_path & PID_extension)
-        
-        'LPIstow_extension = "LPIstow.csv"
-        LPIstow_extension = "processInspector-BIN_USAGE*"
-        LPIstow_input_file = Dir(folder_path & LPIstow_extension)
-
-        'MTpick_extension = "MTpick.csv"
-        'MTpick_input_file = Dir(folder_path & MTpick_extension)
-
-        'FRR_extension = "FRR.csv"
-        FRR_extension = "functionRollupReport-KRB1-Transf*"
-        FRR_input_file = Dir(folder_path & FRR_extension)
-
-        'LPIpick_extension = "LPIpick.csv"
-        LPIpick_extension = "processInspector-CONTAINER_TYPE*"
-        LPIpick_input_file = Dir(folder_path & LPIpick_extension)
-        
-        'UR_extension = "UR.csv"
-        UR_extension = "unitsRollup-KRB1-ItemPicked*"
-        UR_input_file = Dir(folder_path & UR_extension)
-        
-       
-        
-        'open workbook
-        Set wbPPR = Workbooks.Open(Filename:=folder_path & PPR_input_file)
-        Set shtPPR = wbPPR.Sheets(1)
-        
-        Set wbPID = Workbooks.Open(Filename:=folder_path & PID_input_file)
-        Set shtPID = wbPID.Sheets(1)
-        
-        Set wbLPIstow = Workbooks.Open(Filename:=folder_path & LPIstow_input_file)
-        Set shtLPIstow = wbLPIstow.Sheets(1)
-
-        'Set wbMTpick = Workbooks.Open(Filename:=folder_path & MTpick_input_file)
-        'Set shtMTpick = wbMTpick.Sheets("MTpick")
-
-        Set wbFRR = Workbooks.Open(Filename:=folder_path & FRR_input_file)
-        Set shtFRR = wbFRR.Sheets(1)
-
-        Set wbLPIpick = Workbooks.Open(Filename:=folder_path & LPIpick_input_file)
-        Set shtLPIpick = wbLPIpick.Sheets(1)
-        
-        Set wbUR = Workbooks.Open(Filename:=folder_path & UR_input_file)
-        Set shtUR = wbUR.Sheets(1)
-       
-        
-        
-        'Get data to fronHalf
-        Call PPR_transfer(shtPPR, shtMain, frontHalf_startRow)
-        Call PID_transfer(shtPID, shtMain, frontHalf_startRow)
-        Call LPI_transfer(shtLPIstow, shtMain, 9, frontHalf_startRow)
-        'Call MTpick_transfer(shtMTpick, shtMain, frontHalf_startRow)
-        Call LPI_transfer(shtLPIpick, shtMain, 16, frontHalf_startRow)
-        Call IBCPLH(shtPPR, shtMain, frontHalf_startRow)
-        Call FRR_transfer(shtFRR, shtMain, 13, frontHalf_startRow)
-        Call OBCPLH(shtPPR, shtUR, shtMain, 12, frontHalf_startRow)
-        Call pickRate(shtFRR, shtMain, 10, frontHalf_startRow)
-        
-        'Get data to backHalf
-        
-        Call PPR_transfer(shtPPR, shtMain, backHalf_startRow)
-        Call PID_transfer(shtPID, shtMain, backHalf_startRow)
-        Call LPI_transfer(shtLPIstow, shtMain, 9, backHalf_startRow)
-        'Call MTpick_transfer(shtMTpick, shtMain, fronHalf_startRow)
-        Call LPI_transfer(shtLPIpick, shtMain, 16, backHalf_startRow)
-        Call IBCPLH(shtPPR, shtMain, backHalf_startRow)
-        Call FRR_transfer(shtFRR, shtMain, 13, backHalf_startRow)
-        Call OBCPLH(shtPPR, shtUR, shtMain, 12, backHalf_startRow)
-        Call pickRate(shtFRR, shtMain, 10, backHalf_startRow)
-        
-        
-        'add in 1 row increments
-        frontHalf_startRow = frontHalf_startRow + 1
-        backHalf_startRow = backHalf_startRow + 1
-        
-        
-        wbPPR.Close
-        wbPID.Close
-        wbLPIstow.Close
-        'wbMTpick.Close
-        wbFRR.Close
-        wbLPIpick.Close
-        wbUR.Close
-        
-        input_file = Dir
-        
-    Next data_path
+    Flag = 0
+    Count = ActiveWorkbook.Worksheets.Count
     
-Application.ScreenUpdating = True
+        For i = 1 To Count
+        
+            wsName = ActiveWorkbook.Worksheets(i).Name
+            If wsName = refIter Then Flag = 1
+            
+        Next i
+        
+            If Flag = 1 Then
+                Debug.Print refIter & " worksheet exist."
+            Else
+                Debug.Print refIter & " worksheet was created"
+                Sheets.Add(After:=Sheets(Sheets.Count)).Name = refIter
+            End If
+            
+    '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    Dim startYear As String, startMonth As String, startDay As String
+    
+    'decompose date for URL input
+    startYear = Year(dtDate)
+    startMonth = Month(dtDate)
+    startDay = Day(dtDate)
+    
+    Sheets(refIter).Select
+    Cells.Select
+    Selection.ClearContents
+    
+    With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
+        
+        .Name = "website" & startDay 'makes sure that it connects to different websites
+        .FieldNames = True
+        .RowNumbers = False
+        .FillAdjacentFormulas = False
+        .PreserveFormatting = True
+        .RefreshOnFileOpen = False
+        .BackgroundQuery = True
+        .RefreshStyle = xlOverwriteCells
+        .SavePassword = False
+        .SaveData = True
+        .AdjustColumnWidth = True
+        .RefreshPeriod = 0
+        .WebFormatting = xlWebFormattingNone
+        .WebTables = "2"
+        .WebPreFormattedTextToColumns = True
+        .WebConsecutiveDelimitersAsOne = True
+        .WebSingleBlockTextImport = False
+        .WebDisableDateRecognition = False
+        .WebDisableRedirections = False
+        .Refresh BackgroundQuery:=True
+    End With
+    
+    Sheets("Report Generator").Select
+    'Sheets(refIter).Select
 
+    'Debug.Print startDay
+    Debug.Print "Connecting to import data for " & dtDate & " ..."
 End Sub
 
-Function do_something(ByRef sInput As String)
-
-    Debug.Print sInput
-
-End Function
-
-Public Sub PPR_transfer(input_sheet As Worksheet, output_sheet As Worksheet, output_row As Integer)
-
-'Get receive dock values (example J2 = (2,10))
-output_sheet.Cells(output_row, 2).value = Round(input_sheet.Cells(2, 10), 1)
-'Get stow
-output_sheet.Cells(output_row, 4).value = Round(input_sheet.Cells(46, 10), 1)
-'Get IB Total
-output_sheet.Cells(output_row, 5).value = Round(input_sheet.Cells(54, 10), 1)
-'Get Receive Volume
-output_sheet.Cells(output_row, 6).value = Round(input_sheet.Cells(54, 8), 1)
-'Get inbound UPC
-output_sheet.Cells(output_row, 8).value = Round(input_sheet.Cells(54, 8) / input_sheet.Cells(14, 8), 1)
-'Get Pick Volume
-output_sheet.Cells(output_row, 11).value = Round(input_sheet.Cells(69, 8), 1)
-'Get TO Dock
-output_sheet.Cells(output_row, 14).value = Round(input_sheet.Cells(71, 10), 1)
-'TO total
-output_sheet.Cells(output_row, 15).value = Round(input_sheet.Cells(74, 10), 1)
-
-End Sub
-
-Public Sub PID_transfer(input_sheet As Worksheet, output_sheet As Worksheet, output_row As Integer)
-'Get LP Receive
-output_sheet.Cells(output_row, 3).value = Round(input_sheet.Cells(5, 2), 1)
-
-End Sub
-
-Public Sub LPI_transfer(input_sheet As Worksheet, output_sheet As Worksheet, col As Integer, output_row As Integer)
-'Get TOT%
-output_sheet.Cells(output_row, col).value = Round(Application.WorksheetFunction.Sum(input_sheet.Range("G:G")) / Application.WorksheetFunction.Sum(input_sheet.Range("H:H")) * 100, 1)
-
-End Sub
-
-Public Sub MTpick_transfer(input_sheet As Worksheet, output_sheet As Worksheet, output_row As Integer)
-
-output_sheet.Cells(output_row, 9).value = Round(input_sheet.Cells(5, 2), 1)
-
-End Sub
-
-Public Sub IBCPLH(input_sheet As Worksheet, output_sheet As Worksheet, output_row As Integer)
-'Get IB case per labor hour
-output_sheet.Cells(output_row, 7).value = Round(input_sheet.Cells(46, 8) / input_sheet.Cells(180, 9), 1)
-End Sub
-
-
-Public Sub FRR_transfer(input_sheet As Worksheet, output_sheet As Worksheet, col As Integer, output_row As Integer)
-'Get Outbound_UPC
-output_sheet.Cells(output_row, col).value = Round(Application.SumIfs(input_sheet.Columns(17), input_sheet.Columns(15), "EACH", input_sheet.Columns(16), "Total") / _
-Application.SumIfs(input_sheet.Columns(13), input_sheet.Columns(15), "EACH", input_sheet.Columns(16), "Total"), 1)
-End Sub
-
-Public Sub OBCPLH(input_sheet1 As Worksheet, input_sheet2 As Worksheet, output_sheet As Worksheet, col As Integer, output_row As Integer)
-'Gets pick rate from calucaltion of two numbers from two files
-output_sheet.Cells(output_row, col).value = Round(Application.SumIfs(input_sheet2.Columns(9), input_sheet2.Columns(8), "Total", input_sheet2.Columns(7), "Case") / input_sheet1.Cells(181, 9), 1)
-
-End Sub
-
-Public Sub pickRate(input_sheet As Worksheet, output_sheet As Worksheet, col As Integer, output_row As Integer)
-'Get pick rate from FRTOP
-output_sheet.Cells(output_row, col).value = Round(Application.SumIfs(input_sheet.Columns(17), input_sheet.Columns(16), "Total", input_sheet.Columns(15), "Case") / _
-Application.SumIfs(input_sheet.Columns(11), input_sheet.Columns(16), "Total", input_sheet.Columns(15), "Case"), 1)
+Sub delayedSort()
+'''THIS SUB HELPS DELAY SUB '''
+  Application.OnTime Now() + TimeValue("0:00:30"), "sortPPR"
+  'Application.Wait (Now + TimeValue("0:00:30")), "sortPPR"
+  sortPPR
+  Debug.Print "sorting..."
 
 End Sub
 
 
+Sub sortPPR()
+''' THIS SUB TRANSFORMS ARRAYS TO COLUMN/CELL FORMAT AND MAPS DATA ONTO REPORT'''
+    'Dim ppr1, ppr2, ppr3, ppr4, ppr5, ppr6, ppr7 As String
+    Dim itemm As Worksheet
+    Dim arrWs
+    
+    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7"))
+
+    For Each itemm In arrWs
+        itemm.Select
+        Columns("A:A").Select
+        Call sort
+        itemm.Columns.AutoFit
+        'MsgBox itemm.Range("a1")
+        'Debug.Print itemm.Name
+        If itemm.Name = "ppr1" Then
+            Call mapPPR(itemm, 14)
+        ElseIf itemm.Name = "ppr2" Then
+            Call mapPPR(itemm, 15)
+        ElseIf itemm.Name = "ppr3" Then
+            Call mapPPR(itemm, 16)
+        ElseIf itemm.Name = "ppr4" Then
+            Call mapPPR(itemm, 17)
+        ElseIf itemm.Name = "ppr5" Then
+            Call mapPPR(itemm, 18)
+        ElseIf itemm.Name = "ppr6" Then
+            Call mapPPR(itemm, 19)
+        ElseIf itemm.Name = "ppr7" Then
+            Call mapPPR(itemm, 20)
+        End If
+
+    Next itemm
+    
+    
+  
+Sheets(1).Select
+
+End Sub
 
 
+Sub mapPPR(ws As Worksheet, j As Integer)
+    
+    '''''map data onto report
+        'Get reveive dock values
+        Sheets("Report Generator").Cells(j, 2).value = Round(ws.Cells(2, 10), 1)
+        'Get stow
+        Sheets("Report Generator").Cells(j, 4).value = Round(ws.Cells(46, 10), 1)
+        'Get IB Total
+        Sheets("Report Generator").Cells(j, 5).value = Round(ws.Cells(54, 10), 1)
+        'Get Receive Volume
+        Sheets("Report Generator").Cells(j, 6).value = Round(ws.Cells(54, 8), 1)
+        'Get inbound UPC
+        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
+        'Get Pick Volume
+        Sheets("Report Generator").Cells(j, 11).value = Round(ws.Cells(69, 8), 1)
+        'Get TO Dock
+        Sheets("Report Generator").Cells(j, 14).value = Round(ws.Cells(71, 10), 1)
+        'TO total
+        Sheets("Report Generator").Cells(j, 15).value = Round(ws.Cells(74, 10), 1)
+
+
+End Sub
+
+
+Sub sort()
+
+    Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=False, _
+        Semicolon:=False, Comma:=True, Space:=False, Other:=False, OtherChar _
+        :="#", FieldInfo:=Array(Array(1, 1), Array(2, 1), Array(3, 1), Array(4, 1), Array(5, _
+        1), Array(6, 1), Array(7, 1), Array(8, 1), Array(9, 1), Array(10, 1), Array(11, 1), Array(12 _
+        , 1), Array(13, 1), Array(14, 1), Array(15, 1), Array(16, 1), Array(17, 1), Array(18, 1), _
+        Array(19, 1)), TrailingMinusNumbers:=True
+
+End Sub
