@@ -96,6 +96,6 @@ Public Sub checkWorksheet(refIter As String, dtDate, building)
     Sheets(refIter).Select
 
     Debug.Print startDay
-    Debug.Print "connecting to import data..."
+    Debug.Print "Connecting to import data for " & dtDate
 End Sub
 
