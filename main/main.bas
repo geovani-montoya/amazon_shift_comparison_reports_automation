@@ -1,7 +1,7 @@
-Attribute VB_Name = "mainProcedure"
+Attribute VB_Name = "main"
 Option Explicit
 
-Sub mainProcedure()
+Sub main()
 
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = False
@@ -21,20 +21,25 @@ Sub mainProcedure()
     For dtDate = dtStartDate To dtEndDate
         iter = iter + 1
         stIter = CStr(iter)
+        
+        '!!!!!!!!!!!!!!! ToDo: array and loop for database names !!!!!!!!!
         Call import("ppr", stIter, dtDate, building)
-
+        
+        'Excel is horrible so feed it slow
         Application.Wait (Now + TimeValue("0:00:01"))
     'Debug.Print (dtDate)
         
     Next dtDate
     
     'Call delayedSort
+    
     Application.ScreenUpdating = True
+    Sheets("Report Generator").Range("D2").Select
 
 End Sub
 
 
-Sub import(dtBase As String, refIter As String, dtDate, building)
+Sub import(dataBase As String, refIter As String, dtDate, building)
 '''' THIS SUB MAKES SURE THE RIGHT WORKSHEETS ARE PRESENT OR CREATES THEM'''
     Dim Flag
     Dim Count
@@ -42,7 +47,7 @@ Sub import(dtBase As String, refIter As String, dtDate, building)
     Dim wsName
 
     'name of worksheet iteration"
-    refIter = dtBase + refIter
+    refIter = dataBase + refIter
     
     Flag = 0
     Count = ActiveWorkbook.Worksheets.Count
@@ -62,40 +67,9 @@ Sub import(dtBase As String, refIter As String, dtDate, building)
             End If
             
     '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    Dim startYear As String, startMonth As String, startDay As String
+    Call websiteDictionary(dataBase, refIter, dtDate, building)
     
-    'decompose date for URL input
-    startYear = Year(dtDate)
-    startMonth = Month(dtDate)
-    startDay = Day(dtDate)
-    
-    Sheets(refIter).Select
-    Cells.Select
-    Selection.ClearContents
-    
-    With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
-    
-        .Name = "website" & startDay 'makes sure that it connects to different websites
-        .FieldNames = True
-        .RowNumbers = False
-        .FillAdjacentFormulas = False
-        .PreserveFormatting = True
-        .RefreshOnFileOpen = False
-        .BackgroundQuery = True
-        .RefreshStyle = xlOverwriteCells
-        .SavePassword = False
-        .SaveData = True
-        .AdjustColumnWidth = True
-        .RefreshPeriod = 0
-        .WebFormatting = xlWebFormattingNone
-        .WebTables = "2"
-        .WebPreFormattedTextToColumns = True
-        .WebConsecutiveDelimitersAsOne = True
-        .WebSingleBlockTextImport = False
-        .WebDisableDateRecognition = False
-        .WebDisableRedirections = False
-        .Refresh BackgroundQuery:=True
-    End With
+    '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     
     Sheets("Report Generator").Select
     'Sheets(refIter).Select
