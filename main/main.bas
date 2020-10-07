@@ -11,8 +11,11 @@ Sub main()
     Dim stIter As String
     Dim building As String
 
+
     dtStartDate = Range("B2").value '#1/1/2018#
     dtEndDate = dtStartDate + 6
+    
+
     
     building = Range("B3").value
     
@@ -23,8 +26,10 @@ Sub main()
         stIter = CStr(iter)
         
         '!!!!!!!!!!!!!!! ToDo: array and loop for database names !!!!!!!!!
-        Call import("ppr", stIter, dtDate, building)
-        Call import("pid", stIter, dtDate, building)
+        'Call import("ppr", stIter, dtDate, building)
+        'Call import("pid", stIter, dtDate, building)
+        
+        Call import("", stIter, dtDate, building)
         
         'Excel is horrible so feed it slow
         Application.Wait (Now + TimeValue("0:00:01"))
@@ -85,9 +90,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
 End Sub
 
 
-
-
-Sub sortPPR()
+Sub sort()
 
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = False
@@ -104,7 +107,7 @@ Sub sortPPR()
     For Each itemm In arrWs
         itemm.Select
         Columns("A:A").Select
-        Call sort
+        Call transform
         itemm.Columns.AutoFit
         'MsgBox itemm.Range("a1")
         'Debug.Print itemm.Name
@@ -122,8 +125,23 @@ Sub sortPPR()
             Call mapPPR(itemm, 19)
         ElseIf itemm.Name = "ppr7" Then
             Call mapPPR(itemm, 20)
+        ElseIf itemm.Name = "pid1" Then
+            Call mapPID(itemm, 14)
+        ElseIf itemm.Name = "pid2" Then
+            Call mapPID(itemm, 15)
+        ElseIf itemm.Name = "pid3" Then
+            Call mapPID(itemm, 16)
+        ElseIf itemm.Name = "pid4" Then
+            Call mapPID(itemm, 17)
+        ElseIf itemm.Name = "pid5" Then
+            Call mapPID(itemm, 18)
+        ElseIf itemm.Name = "pid6" Then
+            Call mapPID(itemm, 19)
+        ElseIf itemm.Name = "pid7" Then
+            Call mapPID(itemm, 20)
         Else
-            MsgBox "nothing"
+            Debug.Print itemm & "woksheet does not exist"
+  
         End If
 
     Next itemm
@@ -131,7 +149,7 @@ Sub sortPPR()
     Application.ScreenUpdating = True
     
   
-Sheets(1).Select
+Sheets("Report Generator").Select
 
 End Sub
 
@@ -148,7 +166,7 @@ Sub mapPPR(ws As Worksheet, j As Integer)
         'Get Receive Volume
         Sheets("Report Generator").Cells(j, 6).value = Round(ws.Cells(54, 8), 1)
         'Get inbound UPC
-'        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
+        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
         'Get Pick Volume
         Sheets("Report Generator").Cells(j, 11).value = Round(ws.Cells(69, 8), 1)
         'Get TO Dock
@@ -159,8 +177,15 @@ Sub mapPPR(ws As Worksheet, j As Integer)
 
 End Sub
 
+Sub mapPID(ws As Worksheet, j As Integer)
+    '''' map PID data report '''
+    'LP receive
+    Sheets("Report Generator").Cells(j, 3).value = Round(ws.Cells(5, 2), 1)
 
-Sub sort()
+End Sub
+
+
+Sub transform()
 
     Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
         TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=False, _

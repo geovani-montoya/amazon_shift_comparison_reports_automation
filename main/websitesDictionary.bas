@@ -1,15 +1,28 @@
 Attribute VB_Name = "websitesDictionary"
 Option Explicit
 
-Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
+Sub websiteDictionary(dataBase, refIter, dtDate, building)
 ''' THIS SUB FINDS LETS MAIN USE THE CORRECT LINK TO THE WEBSITE '''
 
     Dim startYear As String, startMonth As String, startDay As String
+    Dim endYear As String, endMonth As String, endDay As String
+    Dim nextDay As Date
+    
+    nextDay = dtDate + 1
+    Debug.Print "next day is " & nextDay
     
     'decompose date for URL input
     startYear = Year(dtDate)
     startMonth = Month(dtDate)
     startDay = Day(dtDate)
+    
+    'decompose the next day
+    endYear = Year(nextDay)
+    endMonth = Month(nextDay)
+    endDay = Day(nextDay)
+    
+    Debug.Print "type is " & VarType(endDay)
+    
     
     Sheets(dataBase & refIter).Select
     Cells.Select
@@ -49,7 +62,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
     ElseIf dataBase = "pid" Then
         
         With ActiveSheet.QueryTables.Add(Connection:="URL;https://monitorportal.amazon.com/mws?Action=" _
-        & "GetGraph&Version=2007-07-07&SchemaName1=Service&DataSet1=Prod&Marketplace1=KRB1&HostGroup1=" _
+        & "GetGraph&Version=2007-07-07&SchemaName1=Service&DataSet1=Prod&Marketplace1=" & building & "&HostGroup1=" _
         & "ALL&Host1=ALL&ServiceName1=AFTInboundDirectorService&MethodName1=PerformanceHealthHandler" _
         & "&Client1=ALL&MetricClass1=PID&Instance1=PID-1&Metric1=Encounter.FinalState.RECEIVED&Period1=" _
         & "OneHour&Stat1=sum&Label1=Encounter.FinalState.RECEIVED&SchemaName2=Service&Metric2=" _
@@ -83,11 +96,10 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
             .Refresh BackgroundQuery:=True
         End With
 
-        
+    Else:
+        Debug.Print "nothing"
     End If
     
-
-
 
 
 End Sub
