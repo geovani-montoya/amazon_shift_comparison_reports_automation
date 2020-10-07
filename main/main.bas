@@ -24,6 +24,7 @@ Sub main()
         
         '!!!!!!!!!!!!!!! ToDo: array and loop for database names !!!!!!!!!
         Call import("ppr", stIter, dtDate, building)
+        Call import("pid", stIter, dtDate, building)
         
         'Excel is horrible so feed it slow
         Application.Wait (Now + TimeValue("0:00:01"))
@@ -71,6 +72,8 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
     
     '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     
+    dataBase = vbNullString
+    
     Sheets("Report Generator").Select
     'Sheets(refIter).Select
 
@@ -78,14 +81,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
     Debug.Print "Connecting to import data for " & dtDate & " ..."
 End Sub
 
-Sub delayedSort()
-'''THIS SUB HELPS DELAY SUB '''
-  Application.OnTime Now() + TimeValue("0:00:30"), "sortPPR"
-  'Application.Wait (Now + TimeValue("0:00:30")), "sortPPR"
-  sortPPR
-  Debug.Print "sorting..."
 
-End Sub
 
 
 Sub sortPPR()
@@ -94,11 +90,13 @@ Sub sortPPR()
     Application.ScreenUpdating = False
     
 ''' THIS SUB TRANSFORMS ARRAYS TO COLUMN/CELL FORMAT AND MAPS DATA ONTO REPORT'''
-    'Dim ppr1, ppr2, ppr3, ppr4, ppr5, ppr6, ppr7 As String
+'!!!!!!!!!!!!!! FIX: horrible way of doing this (e.g. loop through the rows)
     Dim itemm As Worksheet
     Dim arrWs
     
-    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7"))
+    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
+                             "pidppr1", "pidppr2", "pidppr3", "pidppr4", "pidppr5", "pidppr6", "pidppr7" _
+                            ))
 
     For Each itemm In arrWs
         itemm.Select
@@ -121,6 +119,8 @@ Sub sortPPR()
             Call mapPPR(itemm, 19)
         ElseIf itemm.Name = "ppr7" Then
             Call mapPPR(itemm, 20)
+        Else
+            MsgBox "nothing"
         End If
 
     Next itemm
@@ -145,7 +145,7 @@ Sub mapPPR(ws As Worksheet, j As Integer)
         'Get Receive Volume
         Sheets("Report Generator").Cells(j, 6).value = Round(ws.Cells(54, 8), 1)
         'Get inbound UPC
-        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
+'        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
         'Get Pick Volume
         Sheets("Report Generator").Cells(j, 11).value = Round(ws.Cells(69, 8), 1)
         'Get TO Dock
@@ -166,5 +166,15 @@ Sub sort()
         1), Array(6, 1), Array(7, 1), Array(8, 1), Array(9, 1), Array(10, 1), Array(11, 1), Array(12 _
         , 1), Array(13, 1), Array(14, 1), Array(15, 1), Array(16, 1), Array(17, 1), Array(18, 1), _
         Array(19, 1)), TrailingMinusNumbers:=True
+
+End Sub
+
+
+Sub delayedSort()
+'''THIS SUB HELPS DELAY SUB '''
+  Application.OnTime Now() + TimeValue("0:00:30"), "sortPPR"
+  'Application.Wait (Now + TimeValue("0:00:30")), "sortPPR"
+  sortPPR
+  Debug.Print "sorting..."
 
 End Sub

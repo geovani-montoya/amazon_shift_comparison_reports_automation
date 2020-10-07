@@ -15,7 +15,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
     Cells.Select
     Selection.ClearContents
     
-    If dataBase = "ppr1" Then
+    If dataBase = "ppr" Then
     
         With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/" _
             & "processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" _
@@ -46,7 +46,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
         End With
         
         
-    ElseIf dataBase = "ppr" Then
+    ElseIf dataBase = "pid" Then
         
         With ActiveSheet.QueryTables.Add(Connection:="URL;https://monitorportal.amazon.com/mws?Action=" _
         & "GetGraph&Version=2007-07-07&SchemaName1=Service&DataSet1=Prod&Marketplace1=KRB1&HostGroup1=" _
