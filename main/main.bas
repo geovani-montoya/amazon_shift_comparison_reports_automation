@@ -48,7 +48,8 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
     Dim wsName
 
     'name of worksheet iteration"
-    refIter = dataBase + refIter
+    'refIter = dataBase + refIter
+    Debug.Print dataBase
     
     Flag = 0
     Count = ActiveWorkbook.Worksheets.Count
@@ -56,7 +57,8 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
         For i = 1 To Count
         
             wsName = ActiveWorkbook.Worksheets(i).Name
-            If wsName = refIter Then Flag = 1
+            If wsName = dataBase + refIter Then Flag = 1
+            'If wsName = refIter Then Flag = 1
             
         Next i
         
@@ -64,7 +66,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
                 Debug.Print refIter & " worksheet exist."
             Else
                 Debug.Print refIter & " worksheet was created"
-                Sheets.Add(After:=Sheets(Sheets.Count)).Name = refIter
+                Sheets.Add(After:=Sheets(Sheets.Count)).Name = dataBase + refIter
             End If
             
     '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -79,6 +81,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
 
     'Debug.Print startDay
     Debug.Print "Connecting to import data for " & dtDate & " ..."
+    
 End Sub
 
 
@@ -95,7 +98,7 @@ Sub sortPPR()
     Dim arrWs
     
     Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
-                             "pidppr1", "pidppr2", "pidppr3", "pidppr4", "pidppr5", "pidppr6", "pidppr7" _
+                             "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7" _
                             ))
 
     For Each itemm In arrWs

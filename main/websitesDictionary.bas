@@ -11,7 +11,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
     startMonth = Month(dtDate)
     startDay = Day(dtDate)
     
-    Sheets(refIter).Select
+    Sheets(dataBase & refIter).Select
     Cells.Select
     Selection.ClearContents
     
@@ -21,7 +21,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
             & "processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" _
             & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0" _
             & "&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on" _
-            & "&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
+            & "&employmentType=AllEmployees", Destination:=Sheets(dataBase & refIter).Range("A1"))
     
             .Name = "website" & startDay 'makes sure that it connects to different websites
             .FieldNames = True
@@ -59,7 +59,7 @@ Public Sub websiteDictionary(dataBase, refIter, dtDate, building)
         & "DecoratePoints=true&StartTime1=2020-09-30T14%3A00%3A00Z&EndTime1=2020-10-01T01%3A00%3A00Z&" _
         & "FunctionExpression1=SUM%28M1%2CM2%2CM3%29&FunctionLabel1=AVG%20%28avg%3A%20%7Bavg%7D%29&" _
         & "FunctionYAxisPreference1=left&FunctionColor1=default&OutputFormat=CSV_TRANSPOSE" _
-        , Destination:=Sheets(refIter).Range("A1"))
+        , Destination:=Sheets(dataBase & refIter).Range("A1"))
         
             .Name = "website" & startDay 'makes sure that it connects to different websites
             .FieldNames = True
