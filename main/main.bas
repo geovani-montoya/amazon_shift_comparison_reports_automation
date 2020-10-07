@@ -74,7 +74,7 @@ Sub import(dtBase As String, refIter As String, dtDate, building)
     Selection.ClearContents
     
     With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/processPathRollup?reportFormat=CSV&warehouseId=" & building & "&spanType=Day&startDateDay=" & startYear & "%2F" & startMonth & "%2F" & startDay & "&maxIntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0&endMinuteIntraday=0&_adjustPlanHours=on&_hideEmptyLineItems=on&employmentType=AllEmployees", Destination:=Sheets(refIter).Range("A1"))
-        
+    
         .Name = "website" & startDay 'makes sure that it connects to different websites
         .FieldNames = True
         .RowNumbers = False
@@ -115,6 +115,10 @@ End Sub
 
 
 Sub sortPPR()
+
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = False
+    
 ''' THIS SUB TRANSFORMS ARRAYS TO COLUMN/CELL FORMAT AND MAPS DATA ONTO REPORT'''
     'Dim ppr1, ppr2, ppr3, ppr4, ppr5, ppr6, ppr7 As String
     Dim itemm As Worksheet
@@ -147,6 +151,7 @@ Sub sortPPR()
 
     Next itemm
     
+    Application.ScreenUpdating = True
     
   
 Sheets(1).Select
