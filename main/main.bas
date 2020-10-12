@@ -13,7 +13,7 @@ Sub main()
 
 
     dtStartDate = Range("B2").value '#1/1/2018#
-    dtEndDate = dtStartDate + 6
+    dtEndDate = dtStartDate + 3
     
 
     
@@ -26,10 +26,10 @@ Sub main()
         stIter = CStr(iter)
         
         '!!!!!!!!!!!!!!! ToDo: array and loop for database names !!!!!!!!!
-        'Call import("ppr", stIter, dtDate, building)
-        'Call import("pid", stIter, dtDate, building)
+        Call import("ppr", stIter, dtDate, building)
+        Call import("pid", stIter, dtDate, building)
         
-        Call import("", stIter, dtDate, building)
+        
         
         'Excel is horrible so feed it slow
         Application.Wait (Now + TimeValue("0:00:01"))
@@ -54,7 +54,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
 
     'name of worksheet iteration"
     'refIter = dataBase + refIter
-    Debug.Print dataBase
+    'Debug.Print dataBase
     
     Flag = 0
     Count = ActiveWorkbook.Worksheets.Count
@@ -68,9 +68,9 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
         Next i
         
             If Flag = 1 Then
-                Debug.Print refIter & " worksheet exist."
+                Debug.Print dataBase & refIter & " worksheet exist."
             Else
-                Debug.Print refIter & " worksheet was created"
+                Debug.Print dataBase & refIter & " worksheet was created"
                 Sheets.Add(After:=Sheets(Sheets.Count)).Name = dataBase + refIter
             End If
             
@@ -100,8 +100,12 @@ Sub sort()
     Dim itemm As Worksheet
     Dim arrWs
     
-    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
-                             "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7" _
+    'Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
+    '                         "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7" _
+    '                        ))
+                            
+    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", _
+                             "pid1", "pid2", "pid3", "pid4" _
                             ))
 
     For Each itemm In arrWs
@@ -109,8 +113,6 @@ Sub sort()
         Columns("A:A").Select
         Call transform
         itemm.Columns.AutoFit
-        'MsgBox itemm.Range("a1")
-        'Debug.Print itemm.Name
         If itemm.Name = "ppr1" Then
             Call mapPPR(itemm, 14)
         ElseIf itemm.Name = "ppr2" Then

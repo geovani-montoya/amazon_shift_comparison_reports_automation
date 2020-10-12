@@ -6,23 +6,36 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
 
     Dim startYear As String, startMonth As String, startDay As String
     Dim endYear As String, endMonth As String, endDay As String
-    Dim nextDay As Date
+    Dim nextDay As Date, pidstartMonth As String, pidstartDay As String
+    Dim pidendMonth As String, pidendDay As String
     
-    nextDay = dtDate + 1
-    Debug.Print "next day is " & nextDay
+    
     
     'decompose date for URL input
     startYear = Year(dtDate)
     startMonth = Month(dtDate)
     startDay = Day(dtDate)
     
-    'decompose the next day
+    Debug.Print "this day is " & startYear & "/" & startMonth & "/" & startDay
+    
+    'decompose the next day for URL input
+    nextDay = dtDate + 1
     endYear = Year(nextDay)
     endMonth = Month(nextDay)
     endDay = Day(nextDay)
     
-    Debug.Print "type is " & VarType(endDay)
+    'decompose PID URL input
+    Debug.Print "    "
+    pidstartMonth = Format(startMonth, "00")
+    pidstartDay = Format(startDay, "00")
+    pidendMonth = Format(endMonth, "00")
+    pidendDay = Format(endDay, "00")
     
+    Debug.Print "new dates", pidstartMonth, pidstartDay, pidendDay, pidendMonth
+    
+    
+    Debug.Print "    "
+    Debug.Print "    "
     
     Sheets(dataBase & refIter).Select
     Cells.Select
@@ -58,7 +71,7 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
             .Refresh BackgroundQuery:=True
         End With
         
-        
+ '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! figure out why changing the date would stall the process!!!!!!!!!!!!!!
     ElseIf dataBase = "pid" Then
         
         With ActiveSheet.QueryTables.Add(Connection:="URL;https://monitorportal.amazon.com/mws?Action=" _
@@ -68,11 +81,24 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
         & "OneHour&Stat1=sum&Label1=Encounter.FinalState.RECEIVED&SchemaName2=Service&Metric2=" _
         & "Encounter.FinalState.CANNOT_CHECK_IN&Label2=Encounter.FinalState.CANNOT_CHECK_IN&SchemaName3=" _
         & "Service&Metric3=Encounter.FinalState.CANNOT_RECEIVE&Label3=Encounter.FinalState." _
-        & "CANNOT_RECEIVE&HeightInPixels=250&WidthInPixels=600&GraphTitle=KRB1%20PID-1&" _
-        & "DecoratePoints=true&StartTime1=2020-09-30T14%3A00%3A00Z&EndTime1=2020-10-01T01%3A00%3A00Z&" _
+        & "CANNOT_RECEIVE&HeightInPixels=250&WidthInPixels=600&GraphTitle=" & building & "%20PID-1&" _
+        & "DecoratePoints=true&StartTime1=" & startYear & "-" & pidstartMonth & "-" & pidstartDay & "T14%3A00%3A00Z&EndTime1=" & endYear & "-" & pidendMonth & "-" & pidendDay & "T01%3A00%3A00Z&" _
         & "FunctionExpression1=SUM%28M1%2CM2%2CM3%29&FunctionLabel1=AVG%20%28avg%3A%20%7Bavg%7D%29&" _
         & "FunctionYAxisPreference1=left&FunctionColor1=default&OutputFormat=CSV_TRANSPOSE" _
         , Destination:=Sheets(dataBase & refIter).Range("A1"))
+        
+        
+        'https://monitorportal.amazon.com/mws?Action=
+        'GetGraph&Version=2007-07-07&SchemaName1=Service&DataSet1=Prod&Marketplace1=KRB1&HostGroup1=
+        'ALL&Host1=ALL&ServiceName1=AFTInboundDirectorService&MethodName1=PerformanceHealthHandler
+        '&Client1=ALL&MetricClass1=PID&Instance1=PID-1&Metric1=Encounter.FinalState.RECEIVED&Period1
+        '=OneHour&Stat1=sum&Label1=Encounter.FinalState.RECEIVED&SchemaName2=Service&Metric2=
+        'Encounter.FinalState.CANNOT_CHECK_IN&Label2=Encounter.FinalState.
+        'CANNOT_CHECK_IN&SchemaName3=Service&Metric3=Encounter.FinalState.CANNOT_RECEIVE&Label3=Encounter.FinalState.
+        'CANNOT_RECEIVE&HeightInPixels=250&WidthInPixels=600&GraphTitle=KRB1%20PID-1&
+        'DecoratePoints=true&StartTime1=2020-09-27T14%3A00%3A00Z&EndTime1=2020-09-28T01%3A00%3A00Z&
+        'FunctionExpression1=SUM%28M1%2CM2%2CM3%29&FunctionLabel1=AVG%20%28avg%3A%20%7Bavg%7D%29&
+        'FunctionYAxisPreference1=left&FunctionColor1=default&OutputFormat=CSV_TRANSPOSE
         
             .Name = "website" & startDay 'makes sure that it connects to different websites
             .FieldNames = True
