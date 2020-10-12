@@ -10,13 +10,14 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
     Dim pidendMonth As String, pidendDay As String
     
     
+    Debug.Print " "
+    
     
     'decompose date for URL input
     startYear = Year(dtDate)
     startMonth = Month(dtDate)
     startDay = Day(dtDate)
     
-    Debug.Print "this day is " & startYear & "/" & startMonth & "/" & startDay
     
     'decompose the next day for URL input
     nextDay = dtDate + 1
@@ -25,17 +26,12 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
     endDay = Day(nextDay)
     
     'decompose PID URL input
-    Debug.Print "    "
+
     pidstartMonth = Format(startMonth, "00")
     pidstartDay = Format(startDay, "00")
     pidendMonth = Format(endMonth, "00")
     pidendDay = Format(endDay, "00")
-    
-    Debug.Print "new dates", pidstartMonth, pidstartDay, pidendDay, pidendMonth
-    
-    
-    Debug.Print "    "
-    Debug.Print "    "
+
     
     Sheets(dataBase & refIter).Select
     Cells.Select
@@ -71,7 +67,7 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
             .Refresh BackgroundQuery:=True
         End With
         
- '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! figure out why changing the date would stall the process!!!!!!!!!!!!!!
+ 
     ElseIf dataBase = "pid" Then
         
         With ActiveSheet.QueryTables.Add(Connection:="URL;https://monitorportal.amazon.com/mws?Action=" _
@@ -86,19 +82,6 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
         & "FunctionExpression1=SUM%28M1%2CM2%2CM3%29&FunctionLabel1=AVG%20%28avg%3A%20%7Bavg%7D%29&" _
         & "FunctionYAxisPreference1=left&FunctionColor1=default&OutputFormat=CSV_TRANSPOSE" _
         , Destination:=Sheets(dataBase & refIter).Range("A1"))
-        
-        
-        'https://monitorportal.amazon.com/mws?Action=
-        'GetGraph&Version=2007-07-07&SchemaName1=Service&DataSet1=Prod&Marketplace1=KRB1&HostGroup1=
-        'ALL&Host1=ALL&ServiceName1=AFTInboundDirectorService&MethodName1=PerformanceHealthHandler
-        '&Client1=ALL&MetricClass1=PID&Instance1=PID-1&Metric1=Encounter.FinalState.RECEIVED&Period1
-        '=OneHour&Stat1=sum&Label1=Encounter.FinalState.RECEIVED&SchemaName2=Service&Metric2=
-        'Encounter.FinalState.CANNOT_CHECK_IN&Label2=Encounter.FinalState.
-        'CANNOT_CHECK_IN&SchemaName3=Service&Metric3=Encounter.FinalState.CANNOT_RECEIVE&Label3=Encounter.FinalState.
-        'CANNOT_RECEIVE&HeightInPixels=250&WidthInPixels=600&GraphTitle=KRB1%20PID-1&
-        'DecoratePoints=true&StartTime1=2020-09-27T14%3A00%3A00Z&EndTime1=2020-09-28T01%3A00%3A00Z&
-        'FunctionExpression1=SUM%28M1%2CM2%2CM3%29&FunctionLabel1=AVG%20%28avg%3A%20%7Bavg%7D%29&
-        'FunctionYAxisPreference1=left&FunctionColor1=default&OutputFormat=CSV_TRANSPOSE
         
             .Name = "website" & startDay 'makes sure that it connects to different websites
             .FieldNames = True
@@ -121,8 +104,64 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
             .WebDisableRedirections = False
             .Refresh BackgroundQuery:=True
         End With
-
-    Else:
+        
+    ElseIf dataBase = "frr" Then
+        
+        With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/" _
+        & "reports/functionRollup?reportFormat=CSV&warehouseId=" & building & "&processId" _
+        & "=1003065&spanType=Day&startDateDay=" & startYear & "%2F" & pidstartMonth & "%2F" & pidstartDay & "&max" _
+        & "IntradayDays=1&startHourIntraday=0&startMinuteIntraday=0&endHourIntraday=0" _
+        & "&endMinuteIntraday=0", Destination:=Sheets(dataBase & refIter).Range("A1"))
+            
+            .Name = "website" & startDay 'makes sure that it connects to different websites
+            .FieldNames = True
+            .RowNumbers = False
+            .FillAdjacentFormulas = False
+            .PreserveFormatting = True
+            .RefreshOnFileOpen = False
+            .BackgroundQuery = True
+            .RefreshStyle = xlOverwriteCells
+            .SavePassword = False
+            .SaveData = True
+            .AdjustColumnWidth = True
+            .RefreshPeriod = 0
+            .WebFormatting = xlWebFormattingNone
+            .WebTables = "2"
+            .WebPreFormattedTextToColumns = True
+            .WebConsecutiveDelimitersAsOne = True
+            .WebSingleBlockTextImport = False
+            .WebDisableDateRecognition = False
+            .WebDisableRedirections = False
+            .Refresh BackgroundQuery:=True
+        End With
+    
+    ElseIf dataBase = "ur" Then
+    
+        With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/unitsRollup?reportFormat=CSV&warehouseId=KRB1&jobAction=ItemPicked&startDate=2020%2F09%2F30&startHour=7&startMinute=0&endDate=2020%2F09%2F30&endHour=18&endMinute=0", Destination:=Range("A1"))
+            
+            .Name = "website" & startDay 'makes sure that it connects to different websites
+            .FieldNames = True
+            .RowNumbers = False
+            .FillAdjacentFormulas = False
+            .PreserveFormatting = True
+            .RefreshOnFileOpen = False
+            .BackgroundQuery = True
+            .RefreshStyle = xlOverwriteCells
+            .SavePassword = False
+            .SaveData = True
+            .AdjustColumnWidth = True
+            .RefreshPeriod = 0
+            .WebFormatting = xlWebFormattingNone
+            .WebTables = "2"
+            .WebPreFormattedTextToColumns = True
+            .WebConsecutiveDelimitersAsOne = True
+            .WebSingleBlockTextImport = False
+            .WebDisableDateRecognition = False
+            .WebDisableRedirections = False
+            .Refresh BackgroundQuery:=True
+        End With
+    
+    Else
         Debug.Print "nothing"
     End If
     

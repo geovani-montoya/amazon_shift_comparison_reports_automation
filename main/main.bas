@@ -28,7 +28,8 @@ Sub main()
         '!!!!!!!!!!!!!!! ToDo: array and loop for database names !!!!!!!!!
         Call import("ppr", stIter, dtDate, building)
         Call import("pid", stIter, dtDate, building)
-        
+        Call import("frr", stIter, dtDate, building)
+        Call import("ur", stIter, dtDate, building)
         
         
         'Excel is horrible so feed it slow
@@ -82,9 +83,7 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
     dataBase = vbNullString
     
     Sheets("Report Generator").Select
-    'Sheets(refIter).Select
 
-    'Debug.Print startDay
     Debug.Print "Connecting to import data for " & dtDate & " ..."
     
 End Sub
@@ -105,7 +104,9 @@ Sub sort()
     '                        ))
                             
     Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", _
-                             "pid1", "pid2", "pid3", "pid4" _
+                             "pid1", "pid2", "pid3", "pid4", _
+                             "frr1", "frr2", "frr3", "frr4", _
+                             "ur1", "ur2", "ur3", "ur4" _
                             ))
 
     For Each itemm In arrWs
@@ -127,6 +128,7 @@ Sub sort()
             Call mapPPR(itemm, 19)
         ElseIf itemm.Name = "ppr7" Then
             Call mapPPR(itemm, 20)
+            
         ElseIf itemm.Name = "pid1" Then
             Call mapPID(itemm, 14)
         ElseIf itemm.Name = "pid2" Then
@@ -141,9 +143,38 @@ Sub sort()
             Call mapPID(itemm, 19)
         ElseIf itemm.Name = "pid7" Then
             Call mapPID(itemm, 20)
+            
+        ElseIf itemm.Name = "frr1" Then
+            Call mapFRR(itemm, 14)
+        ElseIf itemm.Name = "frr2" Then
+            Call mapFRR(itemm, 15)
+        ElseIf itemm.Name = "frr3" Then
+            Call mapFRR(itemm, 16)
+        ElseIf itemm.Name = "frr4" Then
+            Call mapFRR(itemm, 17)
+        ElseIf itemm.Name = "frr5" Then
+            Call mapFRR(itemm, 18)
+        ElseIf itemm.Name = "frr6" Then
+            Call mapFRR(itemm, 19)
+        ElseIf itemm.Name = "frr7" Then
+            Call mapFRR(itemm, 20)
+            
+        ElseIf itemm.Name = "ur1" Then
+            Call mapUR(itemm, Sheets("ppr1"), 14)
+        ElseIf itemm.Name = "ur2" Then
+            Call mapUR(itemm, Sheets("ppr2"), 15)
+        ElseIf itemm.Name = "ur3" Then
+            Call mapUR(itemm, Sheets("ppr3"), 16)
+        ElseIf itemm.Name = "ur4" Then
+            Call mapUR(itemm, Sheets("ppr4"), 17)
+        ElseIf itemm.Name = "ur5" Then
+            Call mapUR(itemm, Sheets("ppr5"), 18)
+        ElseIf itemm.Name = "ur6" Then
+            Call mapUR(itemm, Sheets("ppr6"), 19)
+        ElseIf itemm.Name = "ur7" Then
+            Call mapUR(itemm, Sheets("ppr7"), 20)
         Else
-            Debug.Print itemm & "woksheet does not exist"
-  
+            Debug.Print itemm, "woksheet does not exist"
         End If
 
     Next itemm
@@ -175,6 +206,9 @@ Sub mapPPR(ws As Worksheet, j As Integer)
         Sheets("Report Generator").Cells(j, 14).value = Round(ws.Cells(71, 10), 1)
         'TO total
         Sheets("Report Generator").Cells(j, 15).value = Round(ws.Cells(74, 10), 1)
+        
+        'Get IB case per labor hour
+        Sheets("Report Generator").Cells(j, 7).value = Round(ws.Cells(46, 8) / ws.Cells(180, 9), 1)
 
 
 End Sub
@@ -185,6 +219,29 @@ Sub mapPID(ws As Worksheet, j As Integer)
     Sheets("Report Generator").Cells(j, 3).value = Round(ws.Cells(5, 2), 1)
 
 End Sub
+
+
+Sub mapFRR(ws As Worksheet, j As Integer)
+    
+    'gets pick rate
+    Sheets("Report Generator").Cells(j, 10).value = Round(Application.SumIfs(ws.Columns(17), ws.Columns(16), "Total", ws.Columns(15), "Case") / _
+    Application.SumIfs(ws.Columns(11), ws.Columns(16), "Total", ws.Columns(15), "Case"), 1)
+    
+    'Outbound UPC
+    Sheets("Report Generator").Cells(j, 13).value = Round(Application.SumIfs(ws.Columns(17), ws.Columns(15), "EACH", ws.Columns(16), "Total") / _
+    Application.SumIfs(ws.Columns(13), ws.Columns(15), "EACH", ws.Columns(16), "Total"), 1)
+
+End Sub
+
+
+Sub mapUR(ws As Worksheet, ws2 As Worksheet, j As Integer)
+    
+    
+    'gets OB CLPH from PPR and UR calculation
+    Sheets("Report Generator").Cells(j, 12).value = Round(Application.SumIfs(ws.Columns(9), ws.Columns(8), "Total", ws.Columns(7), "Case") / ws2.Range("I181"), 1)
+
+End Sub
+
 
 
 Sub transform()
