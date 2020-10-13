@@ -206,7 +206,6 @@ Sub mapPPR(ws As Worksheet, j As Integer)
         Sheets("Report Generator").Cells(j, 14).value = Round(ws.Cells(71, 10), 1)
         'TO total
         Sheets("Report Generator").Cells(j, 15).value = Round(ws.Cells(74, 10), 1)
-        
         'Get IB case per labor hour
         Sheets("Report Generator").Cells(j, 7).value = Round(ws.Cells(46, 8) / ws.Cells(180, 9), 1)
 
@@ -235,7 +234,6 @@ End Sub
 
 
 Sub mapUR(ws As Worksheet, ws2 As Worksheet, j As Integer)
-    
     
     'gets OB CLPH from PPR and UR calculation
     Sheets("Report Generator").Cells(j, 12).value = Round(Application.SumIfs(ws.Columns(9), ws.Columns(8), "Total", ws.Columns(7), "Case") / ws2.Range("I181"), 1)

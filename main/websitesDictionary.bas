@@ -137,8 +137,12 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
     
     ElseIf dataBase = "ur" Then
     
-        With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/unitsRollup?reportFormat=CSV&warehouseId=KRB1&jobAction=ItemPicked&startDate=2020%2F09%2F30&startHour=7&startMinute=0&endDate=2020%2F09%2F30&endHour=18&endMinute=0", Destination:=Range("A1"))
-            
+        With ActiveSheet.QueryTables.Add(Connection:="URL;https://fclm-portal.amazon.com/reports/unitsRollup" _
+        & "?reportFormat=CSV&warehouseId=KRB1&jobAction=ItemPicked&" _
+        & "startDate=" & startYear & "%2F" & pidstartMonth & "%2F" & pidstartDay & "&startHour=7&startMinute=0" _
+        & "&endDate=" & startYear & "%2F" & pidstartMonth & "%2F" & pidstartDay & "&endHour=18&endMinute=0" _
+        , Destination:=Sheets(dataBase & refIter).Range("A1"))
+        
             .Name = "website" & startDay 'makes sure that it connects to different websites
             .FieldNames = True
             .RowNumbers = False
