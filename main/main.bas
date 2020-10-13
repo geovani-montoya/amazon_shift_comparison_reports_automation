@@ -13,7 +13,7 @@ Sub main()
 
 
     dtStartDate = Range("B2").value '#1/1/2018#
-    dtEndDate = dtStartDate + 3
+    dtEndDate = dtStartDate + 6
     
 
     
@@ -39,9 +39,9 @@ Sub main()
     Next dtDate
     
     'Call delayedSort
-    
-    Application.ScreenUpdating = True
     Sheets("Report Generator").Range("D2").Select
+    Application.ScreenUpdating = True
+    
 
 End Sub
 
@@ -99,14 +99,11 @@ Sub sort()
     Dim itemm As Worksheet
     Dim arrWs
     
-    'Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
-    '                         "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7" _
-    '                        ))
                             
-    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", _
-                             "pid1", "pid2", "pid3", "pid4", _
-                             "frr1", "frr2", "frr3", "frr4", _
-                             "ur1", "ur2", "ur3", "ur4" _
+    Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
+                             "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7", _
+                             "frr1", "frr2", "frr3", "frr4", "frr5", "frr6", "frr7", _
+                             "ur1", "ur2", "ur3", "ur4", "ur5", "ur6", "ur7" _
                             ))
 
     For Each itemm In arrWs
@@ -257,9 +254,8 @@ End Sub
 
 Sub delayedSort()
 '''THIS SUB HELPS DELAY SUB '''
-  Application.OnTime Now() + TimeValue("0:00:30"), "sortPPR"
-  'Application.Wait (Now + TimeValue("0:00:30")), "sortPPR"
-  sortPPR
+  Application.OnTime Now() + TimeValue("0:01:30"), "sort"
+  sort
   Debug.Print "sorting..."
 
 End Sub

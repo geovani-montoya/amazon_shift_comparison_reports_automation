@@ -1,6 +1,6 @@
 Attribute VB_Name = "delete_data"
-Sub restart_report()
-Attribute restart_report.VB_ProcData.VB_Invoke_Func = " \n14"
+Sub reset_report()
+Attribute reset_report.VB_ProcData.VB_Invoke_Func = " \n14"
 'This clears the data to recycle the report
     Application.ScreenUpdating = Flase
     Range("B14:P20").Select
