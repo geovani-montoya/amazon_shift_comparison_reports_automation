@@ -32,6 +32,7 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
     pidendMonth = Format(endMonth, "00")
     pidendDay = Format(endDay, "00")
 
+    Sheets(dataBase + refIter).Visible = True
     
     Sheets(dataBase & refIter).Select
     Cells.Select
@@ -169,6 +170,9 @@ Sub websiteDictionary(dataBase, refIter, dtDate, building)
         Debug.Print "nothing"
     End If
     
+    
 
+    
+    Sheets(dataBase + refIter).Visible = False
 
 End Sub

@@ -38,6 +38,8 @@ Sub main()
         
     Next dtDate
     
+   
+    
     'Call delayedSort
     Sheets("Report Generator").Range("D2").Select
     Application.ScreenUpdating = True
@@ -76,6 +78,8 @@ Sub import(dataBase As String, refIter As String, dtDate, building)
             End If
             
     '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
+    
     Call websiteDictionary(dataBase, refIter, dtDate, building)
     
     '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -99,7 +103,8 @@ Sub sort()
     Dim itemm As Worksheet
     Dim arrWs
     
-                            
+    Call mainReset
+    On Error Resume Next
     Set arrWs = Sheets(Array("ppr1", "ppr2", "ppr3", "ppr4", "ppr5", "ppr6", "ppr7", _
                              "pid1", "pid2", "pid3", "pid4", "pid5", "pid6", "pid7", _
                              "frr1", "frr2", "frr3", "frr4", "frr5", "frr6", "frr7", _
@@ -107,6 +112,7 @@ Sub sort()
                             ))
 
     For Each itemm In arrWs
+        Sheets(itemm.Name).Visible = True
         itemm.Select
         Columns("A:A").Select
         Call transform
@@ -173,11 +179,14 @@ Sub sort()
         Else
             Debug.Print itemm, "woksheet does not exist"
         End If
-
+        Sheets(itemm.Name).Visible = False
     Next itemm
     
-    Application.ScreenUpdating = True
     
+    
+    Call clearzero
+    Call delConnect
+    Application.ScreenUpdating = True
   
 Sheets("Report Generator").Select
 
@@ -188,7 +197,7 @@ Sub mapPPR(ws As Worksheet, j As Integer)
     
     '''''map data onto report
         'Get reveive dock values
-        Sheets("Report Generator").Cells(j, 2).value = Round(ws.Cells(2, 10), 1)
+        Sheets("Report Generator").Cells(j, 2).value = WorksheetFunction.IfError(Round(ws.Cells(2, 10), 1), " ")
         'Get stow
         Sheets("Report Generator").Cells(j, 4).value = Round(ws.Cells(46, 10), 1)
         'Get IB Total
@@ -196,7 +205,7 @@ Sub mapPPR(ws As Worksheet, j As Integer)
         'Get Receive Volume
         Sheets("Report Generator").Cells(j, 6).value = Round(ws.Cells(54, 8), 1)
         'Get inbound UPC
-        Sheets("Report Generator").Cells(j, 8).value = Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1)
+        Sheets("Report Generator").Cells(j, 8).value = WorksheetFunction.IfError(Round(ws.Cells(54, 8) / ws.Cells(14, 8), 1), "not found")
         'Get Pick Volume
         Sheets("Report Generator").Cells(j, 11).value = Round(ws.Cells(69, 8), 1)
         'Get TO Dock
@@ -251,6 +260,15 @@ Sub transform()
 
 End Sub
 
+Sub clearzero()
+    Dim rng As Range
+    For Each rng In Sheets("Report Generator").Range("B14:F20") ' substitute your range here
+        If rng.value = 0 Then
+            rng.value = ""
+        End If
+    Next
+End Sub
+
 
 Sub delayedSort()
 '''THIS SUB HELPS DELAY SUB '''
@@ -259,3 +277,15 @@ Sub delayedSort()
   Debug.Print "sorting..."
 
 End Sub
+
+
+Sub mainReset()
+'This clears the data to recycle the report
+    'Application.ScreenUpdating = False
+    Range("B14:P20").Select
+    Selection.ClearContents
+    'Application.ScreenUpdating = True
+    Sheets("Report Generator").Range("D2").Select
+    
+End Sub
+
